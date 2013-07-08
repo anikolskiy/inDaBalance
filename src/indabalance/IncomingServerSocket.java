@@ -56,7 +56,7 @@ public class IncomingServerSocket extends ServerSocket implements Runnable, Requ
     public synchronized void addSocketToQueue(Socket requestSocket) {
         System.out.println("Adding socket to queue");
         incomingRequests.add(requestSocket);
-        System.out.println("Adding socket to queue: done");
+        System.out.println("Adding socket to queue: done, queue size: " + incomingRequests.size());
         notify();
     }
 
@@ -64,13 +64,14 @@ public class IncomingServerSocket extends ServerSocket implements Runnable, Requ
     public synchronized void returnSocketToQueue(Socket requestSocket) {
         System.out.println("Returning socket to queue");
         incomingRequests.add(0, requestSocket);
-        System.out.println("Returning socket to queue: done");
+        System.out.println("Returning socket to queue: done, queue size: " + incomingRequests.size());
         notify();
     }
     
     public synchronized Socket pullSocketFromQueue() {
         Socket request = incomingRequests.get(0);
         incomingRequests.remove(0);
+        System.out.println("Pulling socket from queue done, queue size: " + incomingRequests.size());
         
         return request;
     }

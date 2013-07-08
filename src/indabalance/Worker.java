@@ -5,7 +5,9 @@
 package indabalance;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 /**
  *
@@ -18,6 +20,8 @@ public class Worker {
     private String host;
     
     private int port;
+    
+    private int connectionTimeout;
     
     private String name;
     
@@ -33,13 +37,14 @@ public class Worker {
     
     private Socket incomingRequestSocket;
     
-    public Worker(String host, int port, RequestSocketQueue requestSocketQueue) {
-        this(host, port, "unknown worker", requestSocketQueue);
+    public Worker(String host, int port, int connectionTimeout, RequestSocketQueue requestSocketQueue) {
+        this(host, port, connectionTimeout, "unknown worker", requestSocketQueue);
     }
     
-    public Worker(String host, int port, String name, RequestSocketQueue requestSocketQueue) {
+    public Worker(String host, int port, int connectionTimeout, String name, RequestSocketQueue requestSocketQueue) {
         this.host = host;
         this.port = port;
+        this.connectionTimeout = connectionTimeout;
         this.name = name;
         this.requestSocketQueue = requestSocketQueue;
         this.inOutWorker = new InOutStreamWorker(this, true);
@@ -59,7 +64,9 @@ public class Worker {
             try {
                 long t = System.currentTimeMillis();
                 System.out.println("Connecting...");
-                outgoingSocket = new Socket(host, port);
+                SocketAddress sockaddr = new InetSocketAddress(host, port);
+                outgoingSocket = new Socket();
+                outgoingSocket.connect(sockaddr, connectionTimeout);
                 System.out.println("Connected, time: " + (System.currentTimeMillis() - t) + "ms");
             } catch (IOException ioe) {
                 ioe.printStackTrace();

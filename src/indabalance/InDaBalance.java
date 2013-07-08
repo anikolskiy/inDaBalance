@@ -31,7 +31,13 @@ public class InDaBalance {
             
             for (String balancerName : balancers) {
                 HashMap balancerConfig = (HashMap) config.get(balancerName);
-                int balancerPort = Integer.parseInt(balancerConfig.get("port").toString());
+                int balancerPort      = Integer.parseInt(balancerConfig.get("port").toString());
+                int connectionTimeout = 20;
+                
+                if (balancerConfig.get("connection_timeout") != null) {
+                    connectionTimeout = Integer.parseInt(balancerConfig.get("connection_timeout").toString());
+                }
+                
 
                 ServerRoundRobinStrategy strategy = new ServerRoundRobinStrategy();
                 final IncomingServerSocket iss = new IncomingServerSocket(balancerPort, strategy);
@@ -53,7 +59,7 @@ public class InDaBalance {
                     String[] ports = portsConfig.split(",");
                     
                     for (String port : ports) {
-                        Worker worker = new Worker(host, Integer.parseInt(port), balancerName + "_" + host + "_" + port, iss);
+                        Worker worker = new Worker(host, Integer.parseInt(port), connectionTimeout, balancerName + "_" + host + "_" + port, iss);
                         server.addWorker(worker);
                     }
                     
