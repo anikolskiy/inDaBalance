@@ -25,7 +25,7 @@ public class InDaBalance {
         ArrayList<Thread> threads = new ArrayList<Thread>();
         
         try {
-            HashMap config = (HashMap) Yaml.load(new File("src/config.yml"));
+            HashMap config = (HashMap) Yaml.load(new File("/etc/inDaBalance.yml"));
             
             Set<String> balancers = config.keySet();
             
