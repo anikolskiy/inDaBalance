@@ -37,13 +37,6 @@ public class IncomingServerSocket extends ServerSocket implements Runnable, Requ
         
         while (!done) {
             try {
-                while (!isEmpty()) {
-                    try {
-                        Thread.sleep(1);
-                    } catch (InterruptedException ie) {
-                    }
-                }
-
                 Socket requestSocket = accept();
                 addSocketToQueue(requestSocket);
             } catch (IOException ioe) {
