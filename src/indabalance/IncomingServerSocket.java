@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,12 +18,15 @@ import java.util.List;
  */
 public class IncomingServerSocket extends ServerSocket implements Runnable, RequestSocketQueue {
     
+    private String name;
+    
     private List<Socket> incomingRequests;
     
     private ServerRoundRobinStrategy strategy;
 
-    public IncomingServerSocket(int port, ServerRoundRobinStrategy strategy) throws IOException {
+    public IncomingServerSocket(String name, int port, ServerRoundRobinStrategy strategy) throws IOException {
         super(port);
+        this.name = name;
         this.strategy = strategy;
         this.incomingRequests = new ArrayList();
         new Thread(this).start();
@@ -43,6 +47,7 @@ public class IncomingServerSocket extends ServerSocket implements Runnable, Requ
                 Socket requestSocket = accept();
                 addSocketToQueue(requestSocket);
             } catch (IOException ioe) {
+                System.err.println(new Date().toString() + "   IN " + name);
                 ioe.printStackTrace();
             }
         }
@@ -54,24 +59,24 @@ public class IncomingServerSocket extends ServerSocket implements Runnable, Requ
     
     @Override
     public synchronized void addSocketToQueue(Socket requestSocket) {
-        System.out.println("Adding socket to queue");
+        System.out.println(new Date().toString() + "   IN: " + name + " " + getLocalPort() + " Adding socket to queue");
         incomingRequests.add(requestSocket);
-        System.out.println("Adding socket to queue: done, queue size: " + incomingRequests.size());
+        System.out.println(new Date().toString() + "   IN: " + name + " " + getLocalPort() + " Adding socket to queue: done, queue size: " + incomingRequests.size());
         notify();
     }
 
     @Override
     public synchronized void returnSocketToQueue(Socket requestSocket) {
-        System.out.println("Returning socket to queue");
+        System.out.println(new Date().toString() + "   IN: " + name + " " + getLocalPort() + " Returning socket to queue");
         incomingRequests.add(0, requestSocket);
-        System.out.println("Returning socket to queue: done, queue size: " + incomingRequests.size());
+        System.out.println(new Date().toString() + "   IN: " + name + " " + getLocalPort() + " Returning socket to queue: done, queue size: " + incomingRequests.size());
         notify();
     }
     
     public synchronized Socket pullSocketFromQueue() {
         Socket request = incomingRequests.get(0);
         incomingRequests.remove(0);
-        System.out.println("Pulling socket from queue done, queue size: " + incomingRequests.size());
+        System.out.println(new Date().toString() + "   IN: " + name + " " + getLocalPort() + " Pulling socket from queue done, queue size: " + incomingRequests.size());
         
         return request;
     }

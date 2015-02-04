@@ -7,6 +7,7 @@ package indabalance;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Date;
 
 /**
  *
@@ -80,11 +81,11 @@ public class InOutStreamWorker extends Thread {
 
                 //System.out.println((directionToServer ? "IN " : "OUT ") + "reading bytes");
                 if ((inSocket == null) || (outSocket == null)) {
-                    System.err.println("socket null");
+                    System.err.println(new Date().toString() + "   " + worker.getName() + " socket null");
                 }
                 
                 if (buffer == null) {
-                    System.err.println("buffer null");
+                    System.err.println(new Date().toString() + "   " + worker.getName() + " buffer null");
                 }
                 
                 while ((bytesRead = inSocket.getInputStream().read(buffer)) >= 0) {
@@ -94,6 +95,7 @@ public class InOutStreamWorker extends Thread {
                         outSocket.getOutputStream().write(buffer, 0, bytesRead);
                         //System.out.println((directionToServer ? "IN " : "OUT ") + "Wrote " + bytesRead + " bytes");
                     } catch (IOException ioe) {
+                        System.err.println(new Date().toString() + "   " + worker.getName());
                         ioe.printStackTrace();
                         if (directionToServer) {
                             worker.notifyError();
@@ -103,8 +105,10 @@ public class InOutStreamWorker extends Thread {
             } catch (SocketException se) {
                 // Exception will be raised almost every time close() is called
             } catch (IOException ioe) {
+                System.err.println(new Date().toString() + "   " + worker.getName());
                 ioe.printStackTrace();
             } catch (RuntimeException e) {
+                System.err.println(new Date().toString() + "   " + worker.getName());
                 e.printStackTrace();
             }
 

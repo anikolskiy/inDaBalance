@@ -8,6 +8,7 @@ import indabalance.strategy.ServerRoundRobinStrategy;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 import org.ho.yaml.Yaml;
@@ -40,7 +41,7 @@ public class InDaBalance {
                 
 
                 ServerRoundRobinStrategy strategy = new ServerRoundRobinStrategy();
-                final IncomingServerSocket iss = new IncomingServerSocket(balancerPort, strategy);
+                final IncomingServerSocket iss = new IncomingServerSocket(balancerName, balancerPort, strategy);
                 
                 Set<String> servers = balancerConfig.keySet();
                 
@@ -84,6 +85,7 @@ public class InDaBalance {
                 }
             }
         } catch (IOException ioe) {
+            System.err.println(new Date().toString());
             ioe.printStackTrace();
         }
         

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.Date;
 
 /**
  *
@@ -63,12 +64,13 @@ public class Worker {
             
             try {
                 long t = System.currentTimeMillis();
-                System.out.println("Connecting...");
+                System.out.println(new Date().toString() + "   " + name + " Connecting...");
                 SocketAddress sockaddr = new InetSocketAddress(host, port);
                 outgoingSocket = new Socket();
                 outgoingSocket.connect(sockaddr, connectionTimeout);
-                System.out.println("Connected, time: " + (System.currentTimeMillis() - t) + "ms");
+                System.out.println(new Date().toString() + "   " + name + " Connected, time: " + (System.currentTimeMillis() - t) + "ms");
             } catch (IOException ioe) {
+                System.err.println(new Date().toString() + "   " + name);
                 ioe.printStackTrace();
                 nextRetry = System.currentTimeMillis() + RETRY_INTERVAL;
                 ready = true;
@@ -79,20 +81,16 @@ public class Worker {
 
             inOutWorker.setSockets(incomingRequestSocket, outgoingSocket);
             outInWorker.setSockets(outgoingSocket, incomingRequestSocket);
-
-            System.out.println(name + " started processing request");
+            System.out.println(new Date().toString() + "   " + name + " started processing request");
         } catch (Throwable t) {
+            System.err.println(new Date().toString() + "   " + name);
             t.printStackTrace();
             notifyError();
         }
     }
     
     public boolean isReady() {
-        if (ready && inOutWorker.isReady() && outInWorker.isReady() && (System.currentTimeMillis() - nextRetry > 0)) {
-            return true;
-        }
-        
-        return false;
+        return ready && inOutWorker.isReady() && outInWorker.isReady() && (System.currentTimeMillis() - nextRetry > 0);
     }
     
     public void notifyError() {
@@ -105,11 +103,15 @@ public class Worker {
         outInWorker.close();
 
         if (ready) { // display this message only once
-            System.out.println(name + " finished processing request");
+            System.out.println(new Date().toString() + "   " + name + " finished processing request");
         }
 
         incomingRequestSocket = null;
         ready = true;
+    }
+    
+    public String getName() {
+        return name;
     }
     
 }
