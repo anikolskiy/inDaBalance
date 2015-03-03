@@ -60,12 +60,16 @@ public class InOutStreamWorker extends Thread {
     }
 
     private synchronized void waitForSocketsToBeSet() {
+        info("waitForSocketsToBeSet");
+
         while ((inSocket == null) || (outSocket == null)) {
             try {
                 wait();
             } catch (InterruptedException ie) {
             }
         }
+
+        info("waitForSocketsToBeSet finished");
     }
 
     @Override
@@ -95,8 +99,9 @@ public class InOutStreamWorker extends Thread {
                         outSocket.getOutputStream().write(buffer, 0, bytesRead);
                         //System.out.println((directionToServer ? "IN " : "OUT ") + "Wrote " + bytesRead + " bytes");
                     } catch (IOException ioe) {
-                        System.err.println(new Date().toString() + "   " + worker.getName());
+                        error();
                         ioe.printStackTrace();
+                        
                         if (directionToServer) {
                             worker.notifyError();
                         }
@@ -105,10 +110,10 @@ public class InOutStreamWorker extends Thread {
             } catch (SocketException se) {
                 // Exception will be raised almost every time close() is called
             } catch (IOException ioe) {
-                System.err.println(new Date().toString() + "   " + worker.getName());
+                error();
                 ioe.printStackTrace();
             } catch (RuntimeException e) {
-                System.err.println(new Date().toString() + "   " + worker.getName());
+                error();
                 e.printStackTrace();
             }
 
@@ -116,8 +121,24 @@ public class InOutStreamWorker extends Thread {
             reset();
         }
     }
-
+    
     public boolean isReady() {
         return (inSocket == null) && (outSocket == null);
+    }
+    
+    private void info() {
+        info("");
+    }
+    
+    private void info(String message) {
+        System.out.println(new Date().toString() + "   " + worker.getName() + (directionToServer ? " - to server" : " - to client") + (message.equals("") ? "" : " - " + message));
+    }
+    
+    private void error() {
+        error("");
+    }
+    
+    private void error(String message) {
+        System.err.println(new Date().toString() + "   " + worker.getName() + (directionToServer ? " - to server" : " - to client") + (message.equals("") ? "" : " - " + message));
     }
 }

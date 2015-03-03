@@ -66,4 +66,14 @@ public class ServerRoundRobinStrategy {
         return servers.get(currentServerIndex);
     }
     
+    public String getStatus() {
+        StringBuilder sb = new StringBuilder();
+        
+        for (Server server : servers) {
+            sb.append(server.getStatus());
+        }
+        
+        return sb.toString();
+    }
+    
 }

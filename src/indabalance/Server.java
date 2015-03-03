@@ -39,4 +39,15 @@ public class Server {
     public List<Worker> workers() {
         return workers;
     }
+    
+    public String getStatus() {
+        StringBuilder sb = new StringBuilder();
+
+        for (Worker worker : workers) {
+            sb.append(worker.getStatus());
+            sb.append("\n");
+        }
+        
+        return sb.toString();
+    }
 }

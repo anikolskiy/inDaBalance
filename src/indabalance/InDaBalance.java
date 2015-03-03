@@ -41,6 +41,8 @@ public class InDaBalance {
                 
 
                 ServerRoundRobinStrategy strategy = new ServerRoundRobinStrategy();
+                Status.getInstance().addStrategy(strategy);
+
                 final IncomingServerSocket iss = new IncomingServerSocket(balancerName, balancerPort, strategy);
                 
                 Set<String> servers = balancerConfig.keySet();
