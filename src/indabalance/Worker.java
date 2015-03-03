@@ -117,7 +117,6 @@ public class Worker {
         outInWorker.close();
 
         if (ready) { // display this message only once
-            setStatus("available");
             System.out.println(new Date().toString() + "   " + name + " finished processing request");
         }
 

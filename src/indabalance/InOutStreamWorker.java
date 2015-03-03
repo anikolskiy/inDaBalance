@@ -61,6 +61,7 @@ public class InOutStreamWorker extends Thread {
 
     private synchronized void waitForSocketsToBeSet() {
         info("waitForSocketsToBeSet");
+        worker.setStatus("available");
 
         while ((inSocket == null) || (outSocket == null)) {
             try {
@@ -103,6 +104,7 @@ public class InOutStreamWorker extends Thread {
                         ioe.printStackTrace();
                         
                         if (directionToServer) {
+                            worker.setStatus("error sending data to server: " + ioe.toString());
                             worker.notifyError();
                         }
                     }
