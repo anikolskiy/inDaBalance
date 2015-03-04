@@ -114,9 +114,9 @@ public class InOutStreamWorker extends Thread {
             } catch (IOException ioe) {
                 error();
                 ioe.printStackTrace();
-            } catch (RuntimeException e) {
+            } catch (Throwable t) {
                 error();
-                e.printStackTrace();
+                t.printStackTrace();
             }
 
             worker.notifyDone();
