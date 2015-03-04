@@ -16,10 +16,12 @@ import java.util.List;
 public class ServerRoundRobinStrategy {
 
     private List<Server> servers;
-    private int currentServerIndex = 0;
+    private int currentWorkerIndex = 0;
+    private List<Worker> workers;
     
     public ServerRoundRobinStrategy() {
         servers = new ArrayList<Server>();
+        workers = new ArrayList<Worker>();
     }
     
     public synchronized boolean addServer(Server server) {
@@ -40,30 +42,38 @@ public class ServerRoundRobinStrategy {
         return false;
     }
     
-    public synchronized Worker nextWorker() {
-        while (true) {
-            Server server = nextServer();
-
-            List<Worker> workers = server.workers();
-
-            for (Worker worker : workers) {
-                if (worker.isReady()) {
-                    return worker; // TODO this is not really round robin on the worker level, only on the server level
+    private synchronized void loadWorkers() {
+        if (workers.isEmpty()) {
+            for (Server server : servers) {
+                for (Worker worker : server.workers()) {
+                    workers.add(worker);
                 }
-            }
-            
-            try {
-                Thread.sleep(1); // TODO implement some better synchronization
-            } catch (InterruptedException ie) {
             }
         }
     }
     
-    private synchronized Server nextServer() {
-        currentServerIndex++;
-        currentServerIndex %= servers.size();
+    public synchronized Worker nextWorker() {
+        loadWorkers();
         
-        return servers.get(currentServerIndex);
+        int startWorkerIndex = currentWorkerIndex;
+        
+        while (!workers.get(currentWorkerIndex).isReady()) {
+            currentWorkerIndex++;
+            currentWorkerIndex %= workers.size();
+
+            if (currentWorkerIndex == startWorkerIndex) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException ie) {
+                }
+            }
+        }
+        
+        Worker worker = workers.get(currentWorkerIndex);
+        currentWorkerIndex++;
+        currentWorkerIndex %= workers.size();
+        
+        return worker;
     }
     
     public String getStatus() {
