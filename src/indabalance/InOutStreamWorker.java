@@ -64,6 +64,14 @@ public class InOutStreamWorker extends Thread {
         worker.setStatus("available");
 
         while ((inSocket == null) || (outSocket == null)) {
+            if ((inSocket == null) ^ (outSocket == null)) {
+                if (directionToServer) {
+                    worker.setStatus("to server - only one socket set");
+                } else {
+                    worker.setStatus("to client - only one socket set");
+                }
+            }
+            
             try {
                 wait();
             } catch (InterruptedException ie) {
