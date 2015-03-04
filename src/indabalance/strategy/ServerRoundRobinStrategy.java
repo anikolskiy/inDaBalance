@@ -41,20 +41,21 @@ public class ServerRoundRobinStrategy {
     }
     
     public synchronized Worker nextWorker() {
+        int startServerIndex = currentServerIndex;
+        
         while (true) {
             Server server = nextServer();
-
-            List<Worker> workers = server.workers();
-
-            for (Worker worker : workers) {
-                if (worker.isReady()) {
-                    return worker; // TODO this is not really round robin on the worker level, only on the server level
-                }
+            Worker worker = server.nextWorker();
+            
+            if (worker != null) {
+                return worker;
             }
             
-            try {
-                Thread.sleep(1); // TODO implement some better synchronization
-            } catch (InterruptedException ie) {
+            if (currentServerIndex == startServerIndex) {
+                try {
+                    Thread.sleep(1); // TODO implement some better synchronization
+                } catch (InterruptedException ie) {
+                }
             }
         }
     }

@@ -13,6 +13,7 @@ import java.util.List;
  */
 public class Server {
     private List<Worker> workers;
+    private int currentWorkerIndex = 0;
 
     public Server() {
         workers = new ArrayList();
@@ -49,5 +50,23 @@ public class Server {
         }
         
         return sb.toString();
+    }
+    
+    public Worker nextWorker() {
+        currentWorkerIndex++;
+        currentWorkerIndex %= workers.size();
+        
+        int startWorkerIndex = currentWorkerIndex;
+        
+        while (!workers.get(currentWorkerIndex).isReady()) {
+            currentWorkerIndex++;
+            currentWorkerIndex %= workers.size();
+            
+            if (startWorkerIndex == currentWorkerIndex) {
+                return null;
+            }
+        }
+        
+        return workers.get(currentWorkerIndex);
     }
 }
