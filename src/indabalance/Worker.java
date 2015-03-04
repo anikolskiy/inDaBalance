@@ -129,7 +129,7 @@ public class Worker {
     }
     
     public String getStatus() {
-        return name + " - " + ((System.currentTimeMillis() - lastStatusUpdate) / 1000) + "s - " + status;
+        return name + "\t" + ((System.currentTimeMillis() - lastStatusUpdate) / 1000) + "s\t" + status;
     }
     
     public void setStatus(String status) {
