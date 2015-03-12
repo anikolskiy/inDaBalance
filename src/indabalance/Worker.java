@@ -104,6 +104,14 @@ public class Worker {
     }
     
     public boolean isReady() {
+        if (!ready) {
+            setStatus("worker not ready");
+        } else if (!inOutWorker.isReady()) {
+            setStatus("worker to server not ready");
+        } else if (!outInWorker.isReady()) {
+            setStatus("worker to client not ready");
+        }
+        
         return ready && inOutWorker.isReady() && outInWorker.isReady() && (System.currentTimeMillis() - nextRetry > 0);
     }
     
