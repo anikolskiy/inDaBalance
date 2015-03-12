@@ -104,9 +104,7 @@ public class Worker {
     }
     
     public boolean isReady() {
-        if (!ready) {
-            setStatus("worker not ready");
-        } else if (!inOutWorker.isReady()) {
+        if (!inOutWorker.isReady()) {
             setStatus("worker to server not ready");
         } else if (!outInWorker.isReady()) {
             setStatus("worker to client not ready");
