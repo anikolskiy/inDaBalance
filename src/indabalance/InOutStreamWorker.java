@@ -35,7 +35,7 @@ public class InOutStreamWorker extends Thread {
         notify();
     }
 
-    public void reset() {
+    public synchronized void reset() {
         try {
             outSocket.getOutputStream().close();
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class InOutStreamWorker extends Thread {
         outSocket = null;
     }
 
-    public void close() {
+    public synchronized void close() {
         if (outSocket != null) {
             try {
                 outSocket.shutdownOutput();
