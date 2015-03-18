@@ -57,6 +57,13 @@ public class InOutStreamWorker extends Thread {
             } catch (Exception e) {
             }
         }
+
+        if (inSocket != null) {
+            try {
+                inSocket.shutdownInput();
+            } catch (Exception e) {
+            }
+        }
     }
 
     private synchronized void waitForSocketsToBeSet() {
