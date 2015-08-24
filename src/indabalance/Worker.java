@@ -105,7 +105,7 @@ public class Worker {
     
     public boolean isReady() {
         if (!inOutWorker.isReady()) {
-            setStatus("worker to server not ready");
+            setStatus("processing request");
         } else if (!outInWorker.isReady()) {
             setStatus("worker to client not ready");
         }
@@ -122,6 +122,8 @@ public class Worker {
         inOutWorker.close();
         outInWorker.close();
 
+        setStatus("available");
+        
         if (ready) { // display this message only once
             System.out.println(new Date().toString() + "   " + name + " finished processing request");
         }
